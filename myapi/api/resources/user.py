@@ -1,11 +1,12 @@
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
+from flasgger import swag_from
 
 from myapi.models import User
 from myapi.extensions import ma, db
 from myapi.commons.pagination import paginate
-
+from myapi.api.doc.user_doc import user_resource_get
 
 class UserSchema(ma.ModelSchema):
 
@@ -20,8 +21,13 @@ class UserResource(Resource):
     """Single object resource
     """
     method_decorators = [jwt_required]
-
+    @swag_from(user_resource_get)
     def get(self, user_id):
+        """Endpoint get users or user specify.
+           ---
+           tags:
+             - Users
+        """
         schema = UserSchema()
         user = User.query.get_or_404(user_id)
         return {"user": schema.dump(user).data}

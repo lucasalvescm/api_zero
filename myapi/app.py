@@ -1,4 +1,5 @@
 from flask import Flask
+from flasgger import Swagger
 
 from myapi import auth, api
 from myapi.extensions import db, jwt, migrate
@@ -8,10 +9,10 @@ def create_app(config=None, testing=False, cli=False):
     """Application factory, used to create application
     """
     app = Flask('myapi')
-
     configure_app(app, testing)
     configure_extensions(app, cli)
     register_blueprints(app)
+    swagger = Swagger(app)
 
     return app
 

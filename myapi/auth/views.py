@@ -5,23 +5,29 @@ from flask_jwt_extended import (
     jwt_refresh_token_required,
     get_jwt_identity
 )
+from flasgger import swag_from
 
 from myapi.models import User
 from myapi.extensions import pwd_context, jwt
+from myapi.api.doc.login_doc import login_post
+
 
 
 blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @blueprint.route('/login', methods=['POST'])
+@swag_from(login_post)
 def login():
     """Authenticate user and return token
+       ---
+       tags:
+         - Login
     """
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
+    # if not request.is_json:
+    #     return jsonify({"msg": "Missing JSON in request"}), 400
+    username = request.form.get('username', None)
+    password = request.form.get('password', None)
     if not username or not password:
         return jsonify({"msg": "Missing username or password"}), 400
 
